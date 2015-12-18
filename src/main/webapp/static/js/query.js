@@ -5,9 +5,7 @@ var indexCurrent = 0;
 var indexEnd;
 var queryWords;
 
-var test = [
-
-];
+var speed_fast = 5;
 
 $(document).ready(function(){
   var width =  $("body").width();
@@ -30,8 +28,6 @@ $(document).ready(function(){
     $(".panel-footer").css("display","none");
     queryWords = $("#inputWords").val();
 
-
-
     var info = {
       words:queryWords
     };
@@ -52,17 +48,39 @@ $(document).ready(function(){
         analyzeChartData(msg);
         getChartDataRange(indexBegin);
         $(".panel-footer").css("display","block");
+        clearInterval(loop);
+        loop = setInterval(function(){
+          render(c,points);
+        }, speed_slow);
+        console.log("slow");
         $("#myModal").modal('hide');
+
+      },
+      error:function(){
+        clearInterval(loop);
+        loop = setInterval(function(){
+          render(c,points);
+        }, speed_slow);
       }
     });
   }
 
   $("#queryButton").click(function(){
+    clearInterval(loop);
+    loop = setInterval(function(){
+      render(c,points);
+    }, speed_fast);
+
     query();
+
   });
 
   $("#inputWords").keydown(function(event){
     if(event.which==13){
+      clearInterval(loop);
+      loop = setInterval(function(){
+        render(c,points);
+      }, speed_fast);
       query();
       event.preventDefault();
     }
