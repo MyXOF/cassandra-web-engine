@@ -1,0 +1,124 @@
+<html lang="zh-CN">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="lib/css/bootstrap.min.css" rel="stylesheet">
+
+	<script src='lib/js/jquery-1.8.0.min.js' type='text/javascript'></script>
+	<script src="lib/js/bootstrap.min.js" type='text/javascript'></script>
+
+	<link href="static/css/index.css" rel="stylesheet">
+	<link href="static/css/styles.css" rel="stylesheet">
+
+	<script src="static/js/html5_3d_animation.js"></script>
+	<script src="static/js/query.js"></script>
+</head>
+<body>
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+	<div class="container-fluid">
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#sidebar-collapse">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			<a class="navbar-brand" href="#">XOF</a>
+			<ul class="user-menu">
+				<li class="dropdown pull-right">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-circle-info"></span>语言选择<span class="caret"></span></a>
+					<ul class="dropdown-menu" role="menu">
+						<li><a href="#">中文简体</a></li>
+						<li><a href="#">English</a></li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+
+	</div><!-- /.container-fluid -->
+</nav>
+
+<div id="sidebar-collapse" class="col-sm-3 col-sm-offset-9 col-lg-2 col-lg-offset-10 sidebar">
+	<h1>Xinyi SouSou</h1>
+	<ul class="nav menu">
+		<li>Starring List</li>
+		<li>Xu Yi</li>
+		<li>Zhao Xinyi</li>
+		<li>Jin Xuanda</li>
+	</ul>
+	<div class="attribution">Template by <a href="http://www.medialoot.com/item/lumino-admin-bootstrap-template/">Medialoot</a></div>
+</div><!--/.sidebar-->
+
+<div class="col-sm-9 col-lg-10 main">
+
+	<div class="row">
+		<div class="col-lg-8 col-md-6 col-sm-6">
+			<form role="search">
+				<div class="form-group">
+					<input type="text" id="inputWords" class="form-control" placeholder="Search...">
+				</div>
+
+			</form>
+
+		</div>
+		<button class="btn btn-primary" id="queryButton">Serach</button>
+	</div><!--/.row-->
+
+
+	<div class="row">
+		<div class="col-md-12">
+			<div class="panel-default chat">
+				<div class="panel-heading" id="accordion"></div>
+				<div class="panel-body" id = "queryResult">
+				</div>
+				<div class="panel-footer">
+					<div class="page-turn">
+						<em class="glyphicon glyphicon-chevron-left glyphicon-m before-button" ></em><span class="before-button">上一页</span>&nbsp;&nbsp;&nbsp;
+						<span class="after-button">下一页</span><em class="glyphicon glyphicon-chevron-right glyphicon-m after-button"></em>
+					</div>
+				</div>
+			</div>
+		</div><!--/.col-->
+	</div><!--/.row-->
+</div>	<!--/.main-->
+
+<div class="wrap">
+	<canvas id="html5_3d_animation">Internet Explorer Not Supported</canvas>
+	<div id="show"></div>
+</div>
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title" id="myModalLabel">网页提示</h4>
+			</div>
+			<div class="modal-body">正在获取数据,请稍后</div>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal -->
+</div>
+<script>
+	!function ($) {
+		$(document).on("click","ul.nav li.parent > a > span.icon", function(){
+			$(this).find('em:first').toggleClass("glyphicon-minus");
+		});
+		$(".sidebar span.icon").find('em:first').addClass("glyphicon-plus");
+	}(window.jQuery);
+
+	$(window).on('resize', function () {
+		if ($(window).width() > 768) {
+			$('#sidebar-collapse').collapse('show')
+		}
+	});
+
+	$(window).on('resize', function () {
+		if ($(window).width() <= 767){
+			$('#sidebar-collapse').collapse('hide')
+		}
+
+	});
+</script>
+</body>
+</html>

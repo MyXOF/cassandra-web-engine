@@ -1,0 +1,21 @@
+#accordion {
+    display: none;
+}
+
+.panel-footer{
+    display: none;
+}
+
+.before-button{
+    cursor: pointer;
+}
+
+.after-button{
+    cursor: pointer;
+}
+
+.wrap{
+    position: fixed;
+    z-index: -1;
+}
+
