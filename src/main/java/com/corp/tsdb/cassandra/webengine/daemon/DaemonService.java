@@ -1,14 +1,20 @@
 package com.corp.tsdb.cassandra.webengine.daemon;
 
 import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
+import java.io.IOException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.corp.tsdb.cassandra.webengine.cassandra.CassandraCluster;
 import com.corp.tsdb.cassandra.webengine.config.Config;
+import com.corp.tsdb.cassandra.webengine.model.FileInfo;
+import com.corp.tsdb.cassandra.webengine.utils.Gzip;
 
 public class DaemonService {
 	private static final Logger logger = LoggerFactory.getLogger(DaemonService.class);
@@ -24,10 +30,8 @@ public class DaemonService {
 		if(queryWords == null || queryWords.size() == 0){
 			return result;
 		}
-		
-		
-		
-		
+		logger.debug("Query words {}",queryWords.toString());
+		result = queryWords(queryWords);
 		return result;
 	}
 	
@@ -47,8 +51,33 @@ public class DaemonService {
 			}
 			queryWords.add(_word);
 		}
-		
 		return queryWords;
+	}
+	
+	
+	private JSONArray queryWords(Set<String> queryWords){
+		CassandraCluster cluster = CassandraCluster.getInstance();
+		String keyspace = Config.getInstance().cassandra_keyspace;
+		List<FileInfo> result = cluster.selectResult(keyspace, queryWords);
+		return transfer(result);
+	}
+	
+	private JSONArray transfer(List<FileInfo> infoList){
+		JSONArray result = new JSONArray();
+		String root_path = Config.getInstance().file_root_path;
+		for(FileInfo info : infoList){
+			JSONObject object = new JSONObject();
+			try {
+				object.put("title", Gzip.decompress(info.title.array()));
+				object.put("url", String.format("%s/%s", root_path,Gzip.decompress(info.url.array())));
+				object.put("body", Gzip.decompress(info.content.array()));
+			} catch (IOException e) {
+				logger.error("DaemonService : failed to transfer data for file {}",info.docID,e);
+				continue;
+			}
+			result.add(object);
+		}
+		return result;
 	}
 	
 	public static void main(String[] args) {

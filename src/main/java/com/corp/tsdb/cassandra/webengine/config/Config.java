@@ -23,7 +23,7 @@ public class Config {
 	private final String STOP_WORDS_PATH = "/stopWordsQuery.txt";
 	public Set<String> stopWords;
 	private final String CONF_FILE_PATH = "/web-engine-config.properties";
-	public String source_root_path;
+	public String file_root_path;
 	
 	public String cassandra_nodes = "127.0.0.1";
 	public int sql_cassandra_port = 9042;
@@ -48,7 +48,7 @@ public class Config {
 		Properties prop = new Properties();
 		try(InputStream in = Config.class.getResourceAsStream(CONF_FILE_PATH)){
 			prop.load(in);
-			source_root_path = prop.getProperty("file_root_path");
+			file_root_path = prop.getProperty("file_root_path");
 			
 			cassandra_nodes = prop.getProperty("cassandra_nodes");
 			sql_cassandra_port = Integer.parseInt(prop.getProperty("sql_cassandra_port"));

@@ -13,6 +13,7 @@ import com.corp.tsdb.cassandra.webengine.api.rest.model.ErrorConcise;
 import com.corp.tsdb.cassandra.webengine.api.rest.model.NotFoundException;
 import com.corp.tsdb.cassandra.webengine.api.rest.model.PayloadWords;
 import com.corp.tsdb.cassandra.webengine.api.rest.resources.services.WordsQueryApiService;
+import com.corp.tsdb.cassandra.webengine.daemon.DaemonService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -34,8 +35,7 @@ public class WordsQueryApiServiceImpl extends WordsQueryApiService{
 					object.put("body", "Happy Happy Birthday to Me Singles Club: June Happy Happy Birthday to Me Singles Club: June Happy Happy Birthday to Me Singles Club: June Happy Happy Birthday to Me Singles Club: June".toLowerCase());
 					result.add(object);
 				}
-				Thread.sleep(5000);
-
+//				result = DaemonService.getInstance().queryContent(body.getWords());
 			} catch (Exception ex) {
 
 				ErrorConcise err = new ErrorConcise();
