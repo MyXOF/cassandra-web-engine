@@ -52,7 +52,6 @@ $(document).ready(function(){
         loop = setInterval(function(){
           render(c,points);
         }, speed_slow);
-        console.log("slow");
         $("#myModal").modal('hide');
 
       },
