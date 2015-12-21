@@ -57,13 +57,16 @@ public class DaemonService {
 	
 	private JSONArray queryWords(Set<String> queryWords){
 		CassandraCluster cluster = CassandraCluster.getInstance();
-		String keyspace = Config.getInstance().cassandra_keyspace;
-		List<FileInfo> result = cluster.selectResult(keyspace, queryWords);
+		Config config = Config.getInstance();
+		List<FileInfo> result = cluster.selectResult(config.cassandra_keyspace_word,config.cassandra_keyspace_sentence, queryWords);
 		return transfer(result);
 	}
 	
 	private JSONArray transfer(List<FileInfo> infoList){
 		JSONArray result = new JSONArray();
+		if(infoList == null || infoList.size() == 0){
+			return result;
+		}
 		String root_path = Config.getInstance().file_root_path;
 		for(FileInfo info : infoList){
 			JSONObject object = new JSONObject();
@@ -81,10 +84,9 @@ public class DaemonService {
 	}
 	
 	public static void main(String[] args) {
-		String[] a = "doge cat duck".split("\\s");
-		for(String b : a){
-			System.out.println(b);
-		}
+		DaemonService service = DaemonService.getInstance();
+		JSONArray result = service.queryContent("halo reach");
+		System.out.println(result);
 
 	}
 

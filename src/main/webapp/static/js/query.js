@@ -41,45 +41,50 @@ $(document).ready(function(){
       async:true,
       success:function(msg){
         if(msg.length == 0){
-          $("#accordion").text("没有找到结果");
+          $("#accordion").css("display","block").text("没有找到结果");
+          $("#myModal").modal('hide');
+          backgtoundSlow();
           return;
         }
         $("#accordion").css("display","block").text("为您找到相关结果约 "+msg.length+" 个");
         analyzeChartData(msg);
         getChartDataRange(indexBegin);
         $(".panel-footer").css("display","block");
-        clearInterval(loop);
-        loop = setInterval(function(){
-          render(c,points);
-        }, speed_slow);
+        backgtoundSlow();
         $("#myModal").modal('hide');
 
       },
       error:function(){
-        clearInterval(loop);
-        loop = setInterval(function(){
-          render(c,points);
-        }, speed_slow);
+        $("#accordion").css("display","block").text("网络出错,请刷新重试");
+        $("#myModal").modal('hide');
+        backgtoundSlow();
       }
     });
   }
 
-  $("#queryButton").click(function(){
+  function backgroundFast(){
     clearInterval(loop);
     loop = setInterval(function(){
       render(c,points);
     }, speed_fast);
+  }
 
+  function backgtoundSlow(){
+    clearInterval(loop);
+    loop = setInterval(function(){
+      render(c,points);
+    }, speed_slow);
+  }
+
+  $("#queryButton").click(function(){
+    backgroundFast();
     query();
 
   });
 
   $("#inputWords").keydown(function(event){
     if(event.which==13){
-      clearInterval(loop);
-      loop = setInterval(function(){
-        render(c,points);
-      }, speed_fast);
+      backgroundFast();
       query();
       event.preventDefault();
     }

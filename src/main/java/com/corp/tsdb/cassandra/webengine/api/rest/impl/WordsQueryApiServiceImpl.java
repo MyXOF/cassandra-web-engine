@@ -28,14 +28,15 @@ public class WordsQueryApiServiceImpl extends WordsQueryApiService{
 		try {
 			JSONArray result = new JSONArray();
 			try {
-				for(int i = 0;i < 25;i++){
-					JSONObject object = new JSONObject();
-					object.put("title", "Happy Happy Birthday to Me Singles Club: June - Wikipedia, the free encyclopedia".toLowerCase());
-					object.put("url", "file:///Users/xuyi/sourceData/Happy_Happy_Birthday_to_Me_Singles_Club~_June_2162.html");
-					object.put("body", "Happy Happy Birthday to Me Singles Club: June Happy Happy Birthday to Me Singles Club: June Happy Happy Birthday to Me Singles Club: June Happy Happy Birthday to Me Singles Club: June".toLowerCase());
-					result.add(object);
-				}
-//				result = DaemonService.getInstance().queryContent(body.getWords());
+//				for(int i = 0;i < 25;i++){
+//					JSONObject object = new JSONObject();
+//					object.put("title", "Happy Happy Birthday to Me Singles Club: June - Wikipedia, the free encyclopedia".toLowerCase());
+//					object.put("url", "file:///Users/xuyi/sourceData/Happy_Happy_Birthday_to_Me_Singles_Club~_June_2162.html");
+//					object.put("body", "Happy Happy Birthday to Me Singles Club: June Happy Happy Birthday to Me Singles Club: June Happy Happy Birthday to Me Singles Club: June Happy Happy Birthday to Me Singles Club: June".toLowerCase());
+//					result.add(object);
+//				}
+				result = DaemonService.getInstance().queryContent(body.getWords());
+				logger.debug("WordsQueryApiServiceImpl: send result back to web {}",result);
 			} catch (Exception ex) {
 
 				ErrorConcise err = new ErrorConcise();

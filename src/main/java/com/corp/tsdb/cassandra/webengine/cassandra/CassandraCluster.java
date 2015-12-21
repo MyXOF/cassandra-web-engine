@@ -17,10 +17,12 @@ import com.corp.tsdb.cassandra.webengine.config.Config;
 import com.corp.tsdb.cassandra.webengine.model.FileInfo;
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Host;
+import com.datastax.driver.core.KeyspaceMetadata;
 import com.datastax.driver.core.Metadata;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
+import com.datastax.driver.core.TableMetadata;
 
 public class CassandraCluster {
 	private static Logger logger = LoggerFactory.getLogger(CassandraCluster.class);
@@ -40,7 +42,7 @@ public class CassandraCluster {
 	public Session session;
 
 //	private static final String createWordCfCql = "CREATE TABLE IF NOT EXISTS %s.%s (" + "DocID int," + "Weight double,"
-//			+ "Line int," + "PRIMARY KEY(DocID)" + ");";
+//			+ "Line int," + "File blob," + "Title blob,"+ "PRIMARY KEY(DocID)" + ");";
 //
 //	private static final String createDocCFCql = "CREATE TABLE IF NOT EXISTS %s.%s (" + "DocID int," + "File blob,"
 //			+ "Title blob," + "PRIMARY KEY(DocID)" + ");";
@@ -50,8 +52,7 @@ public class CassandraCluster {
 //	private static final String createSentenceCFCql = "CREATE TABLE IF NOT EXISTS %s.%s (" + "Line int,"
 //			+ "Content blob," + "PRIMARY KEY(Line)" + ");";
 
-	private static String selectWordCql = "select DocID,Weight,Line,File,Title"
-																	 + " from %s.%s natural join %s.%s" ;
+	private static String selectWordCql = "select DocID,Weight,Line,File,Title from %s.%s" ;
 	
 	private static String selectSentenceCql = "select Content from %s.%s where Line=%d;";
 
@@ -106,7 +107,7 @@ public class CassandraCluster {
 		myCluster = null;
 	}
 
-	public List<FileInfo> selectResult(String ks,Set<String> cfList) {
+	public List<FileInfo> selectResult(String ks_word,String ks_sentence,Set<String> cfList) {
 		ResultSet rSet = null;
 		List<FileInfo> result = null;
 		Map<Integer, FileInfo> infoMap = new HashMap<Integer,FileInfo>();
@@ -114,20 +115,16 @@ public class CassandraCluster {
 			return result;
 		}
 		for(String cf : cfList){
-			rSet = session.execute(String.format(selectWordCql, ks, "w_"+cf,ks,DOC_CF));
+			if(!checkCf(ks_word, "w_"+cf)) continue;
+			rSet = session.execute(String.format(selectWordCql, ks_word, "w_"+cf));
 			if(rSet != null){
 				for(Row row : rSet.all()){
-					FileInfo info = new FileInfo(row.getInt("DocID"),
-																			  row.getBytes("Title"), 
-																			  row.getBytes("File"), 
-																			  row.getInt("Line"), 
-																			  null,
-																			  row.getDouble("Weight"));
+					FileInfo info = new FileInfo(row.getInt("DocID"),row.getBytes("Title"),row.getBytes("File"), row.getInt("Line"), null,row.getDouble("Weight"));
 					if(infoMap.containsKey(info.docID)){
 						infoMap.get(info.docID).addWeight(info.weight);
 					}
 					else{
-						ByteBuffer content = selectContent(ks, "s_"+info.docID,info.line);
+						ByteBuffer content = selectContent(ks_sentence, "s_"+info.docID,info.line);
 						if(content == null){
 							logger.warn("CassandraCluster cannot get content for DocID {}",info.docID);
 							continue;
@@ -138,7 +135,9 @@ public class CassandraCluster {
 				}
 			}
 		}
-		
+		if(infoMap.size() == 0){
+			return result;
+		}
 		result = new ArrayList<FileInfo>(infoMap.values());
 		Collections.sort(result);
 		return result;
@@ -157,4 +156,22 @@ public class CassandraCluster {
 		return content;
 	}
 	
+	public boolean checkKs(String ks) {
+		KeyspaceMetadata ksm = cluster.getMetadata().getKeyspace(ks);
+		if (ksm == null)
+			return false;
+		return true;
+	}
+	
+	public boolean checkCf(String ks, String cf) {
+		KeyspaceMetadata ksm = cluster.getMetadata().getKeyspace(ks);
+		if (ksm == null)
+			return false;
+			
+		TableMetadata tm = ksm.getTable(cf);
+		if (tm == null)
+			return false;
+			
+		return true;
+	}
 }
